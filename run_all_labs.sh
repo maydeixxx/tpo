@@ -34,33 +34,37 @@ ensure_server() {
 }
 
 echo -e "${CYAN}====================================================================${NC}"
-echo -e "${CYAN}  ЛАБОРАТОРНЫЕ РАБОТЫ 3, 4, 5: ТЕСТИРОВАНИЕ OpenBMC (QA Automation) ${NC}"
+echo -e "${CYAN}  ЛАБОРАТОРНЫЕ РАБОТЫ 3, 4, 5: ТЕСТИРОВАНИЕ OpenBMC (ВАРИАНТ 8)   ${NC}"
 echo -e "${CYAN}====================================================================${NC}"
 echo "Выберите действие:"
-echo "1) Запустить ВСЕ тесты (Лаба 4 Selenium + Лаба 5 Redfish)"
-echo "2) Лабораторная 4: Автотесты Web UI (Selenium) в фоновом режиме (Headless)"
-echo "3) Лабораторная 4: Автотесты Web UI (Selenium) В ЖИВОМ БРАУЗЕРЕ (GUI для показа преподу)"
-echo "4) Лабораторная 5: Автотесты Redfish REST API (PyTest -v -s)"
-echo "5) Запустить автономный OpenBMC Mock Server в терминале"
-echo "6) Выход"
+echo "1) Запустить ВСЕ лабораторные работы разом (Лаба 3 + Лаба 4 + Лаба 5)"
+echo "2) ЛАБОРАТОРНАЯ 3: Выполнить тест-кейсы Варианта 8 (Питание, Вентиляторы, IPMI, SEL)"
+echo "3) ЛАБОРАТОРНАЯ 4: Автотесты Web UI (Selenium) В ЖИВОМ ОКНЕ БРАУЗЕРА (для препода)"
+echo "4) ЛАБОРАТОРНАЯ 4: Автотесты Web UI (Selenium) в фоне (Headless)"
+echo "5) ЛАБОРАТОРНАЯ 5: Автотесты Redfish REST API (PyTest -v -s)"
+echo "6) Запустить автономный OpenBMC Mock Server в терминале"
+echo "7) Выход"
 echo ""
 
-read -p "Введите номер [1-6]: " choice
+read -p "Введите номер [1-7]: " choice
 
 case $choice in
     1)
         ensure_server
-        echo -e "\n${BLUE}▶ Запуск Лабораторной работы 4 (Selenium Web UI)...${NC}"
+        echo -e "\n${BLUE}▶ [Лабораторная 3] Выполнение тест-кейсов Варианта 8...${NC}"
+        "$VENV_PYTHON" "$DIR/lab3_test_plan/run_lab3_variant8.py"
+
+        echo -e "\n${BLUE}▶ [Лабораторная 4] Запуск автотестов Web UI (Selenium)...${NC}"
         "$VENV_PYTHON" "$DIR/lab4_selenium_webui/openbmc_auth_tests.py" --url "$BMC_URL"
 
-        echo -e "\n${BLUE}▶ Запуск Лабораторной работы 5 (Redfish API PyTest)...${NC}"
+        echo -e "\n${BLUE}▶ [Лабораторная 5] Запуск автотестов Redfish API (PyTest)...${NC}"
         "$VENV_PYTEST" "$DIR/lab5_redfish_pytest/test_redfish.py" --bmc-url "$BMC_URL" -v
-        echo -e "\n${GREEN}🎉 ВСЕ ЛАБОРАТОРНЫЕ РАБОТЫ УСПЕШНО ПРОЙДЕНЫ!${NC}"
+        echo -e "\n${GREEN}🎉 ВСЕ ЛАБОРАТОРНЫЕ РАБОТЫ (3, 4, 5) УСПЕШНО ПРОЙДЕНЫ!${NC}"
         ;;
     2)
         ensure_server
-        echo -e "\n${BLUE}▶ Запуск автотестов Selenium Web UI (Headless)...${NC}"
-        "$VENV_PYTHON" "$DIR/lab4_selenium_webui/openbmc_auth_tests.py" --url "$BMC_URL"
+        echo -e "\n${BLUE}▶ Запуск тест-кейсов Лабораторной 3 (Вариант 8)...${NC}"
+        "$VENV_PYTHON" "$DIR/lab3_test_plan/run_lab3_variant8.py"
         ;;
     3)
         ensure_server
@@ -69,14 +73,19 @@ case $choice in
         ;;
     4)
         ensure_server
+        echo -e "\n${BLUE}▶ Запуск автотестов Selenium Web UI (Headless)...${NC}"
+        "$VENV_PYTHON" "$DIR/lab4_selenium_webui/openbmc_auth_tests.py" --url "$BMC_URL"
+        ;;
+    5)
+        ensure_server
         echo -e "\n${BLUE}▶ Запуск автотестов Redfish API (PyTest)...${NC}"
         "$VENV_PYTEST" "$DIR/lab5_redfish_pytest/test_redfish.py" --bmc-url "$BMC_URL" -v -s
         ;;
-    5)
+    6)
         echo -e "\n${BLUE}▶ Запуск OpenBMC Mock Server... (Нажмите Ctrl+C для остановки)${NC}"
         "$VENV_PYTHON" "$MOCK_SERVER" --port "$PORT"
         ;;
-    6)
+    7)
         echo "Выход."
         exit 0
         ;;
