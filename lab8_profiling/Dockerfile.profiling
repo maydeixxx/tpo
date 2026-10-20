@@ -1,0 +1,22 @@
+# Dockerfile для запуска Linux-утилит профилирования (perf stat, vmstat, nmon)
+# по Лабораторной работе №8 (Карев А.А., Ребрик Д.С., СибГУТИ)
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    linux-tools-generic \
+    linux-tools-common \
+    qemu-system-arm \
+    procps \
+    nmon \
+    iproute2 \
+    curl \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
