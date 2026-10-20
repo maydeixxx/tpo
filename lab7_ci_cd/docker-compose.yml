@@ -1,0 +1,26 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: openbmc-jenkins
+    restart: unless-stopped
+    user: root
+    ports:
+      - "8085:8080"      # Веб-интерфейс Jenkins (доступен по адресу http://localhost:8085)
+      - "50000:50000"    # Порт для подключения Jenkins Inbound Agents (JNLP)
+    environment:
+      - JENKINS_OPTS=--prefix=
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - TRY_UPGRADE_IF_NO_MARKER=true
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../:/workspace/openbmc-qa-labs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/login || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  jenkins_data:
+    driver: local
