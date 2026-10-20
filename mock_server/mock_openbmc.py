@@ -582,6 +582,15 @@ def redfish_get_system():
         }
     }), 200
 
+@app.route("/redfish/v1/Systems/system/PowerState", methods=["GET"])
+@app.route("/redfish/v1/Systems/system/Power", methods=["GET"])
+def redfish_get_power_state():
+    return jsonify({
+        "@odata.id": "/redfish/v1/Systems/system/PowerState",
+        "PowerState": server_state["power_state"],
+        "Status": {"State": "Enabled", "Health": "OK"}
+    }), 200
+
 @app.route("/redfish/v1/Systems/system/Actions/ComputerSystem.Reset", methods=["POST"])
 def redfish_system_reset():
     data = request.get_json(force=True, silent=True) or {}
